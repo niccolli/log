@@ -10,4 +10,6 @@ GitHub Pagesの動作確認を兼ねた投稿です。
 
 ## M5Atomを使ったポケットカメラ用プリンタ
 
-![](/images/20211229_m5atom.jpg)
+![](https://raw.githubusercontent.com/niccolli/log/main/images/20211229_m5atom.jpg)
+
+ここに本文の続き
