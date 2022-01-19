@@ -1,0 +1,74 @@
+---
+layout: default
+title:  "ATtinyを活用する"
+date:   2022-01-19 20:00:00 +0900
+categories: make
+---
+
+# ATtinyを活用する
+
+各種通販サイトでATmegaの在庫がどんどんなくなってきたので、まだ比較的在庫のあるATtinyを活用しています。
+
+![](https://raw.githubusercontent.com/niccolli/log/main/images/20220119_ATTINY2313.jpg)
+
+写真のように、Raspberry PiとSPIで接続するときのつまずきをまとめておきます。
+
+## SPI経由の書き込み
+
+AVRマイコンは[SPI経由で書き込み](https://docs.arduino.cc/built-in-examples/arduino-isp/ArduinoISP)ができます。ATtinyでも同じ機能が搭載されているので、SPIのインタフェースがあるRaspberry Piならばライターになることができます。
+
+### avrdudeのビルド
+
+2021-10-30版のRaspberry Pi OSでapt経由でインストールできるavrdudeは、SPIとGPIO Bitbang書き込みがdisableになっています。enableにするために自前でビルドする必要があります。
+
+1. [GitHubのリポジトリ](https://github.com/avrdudes/avrdude)からクローンする。
+1. [Linuxの手順](https://github.com/avrdudes/avrdude/wiki/Building-AVRDUDE-for-Linux)にしたがってビルド(オプションを忘れずに)。
+1. インストールはしてもしなくてもいい。
+
+### 書き込み
+
+動作に癖があったので、下記の点に注意です。
+
+- SPIのCSはどの端子でもいい。
+  - avrdude.confのなかで指定されている。初期状態はGPIO25(SPI0 CS0の横)。
+  - なので、引数で/dev/spidev0.1と指定してもCS側は無視される。
+- gpiochipの指定も必要。
+  - Raspberry Piの場合gpiochip0
+- 書き込みファイルはフルパスで記載。
+  - ~の指定はNGだった。
+
+SPI0を使う場合、下記が実行例になります。
+
+```
+pi@raspberrypi:~ $ ./avrdude -v -p attiny2313 -c linuxspi -P /dev/spidev0.1:/dev/gpiochip0 -U flash:w:/home/pi/LED_Driver.ino.hex
+```
+
+## Raspberry PiからATtinyへSPIで値を書き込む
+
+Raspberry PiからSPIで値を書き込めると、先の書き込みバスを共用できますが、大半のATtinyにはSPIが組み込まれていません。USIというSPIやI2Cに設定できるI/Fを活用します。Raspberry Piから一方的に値を送付し、かつ特に値が返ってこなくていい場合、下記の実装になります。
+
+```
+void setup()
+{
+  // USIをSPIとして設定する
+  USICR  = (1 << USIWM0) | (1 << USICS1);
+  // 値受信時のオーバーフロー割り込みを設定
+  USICR |= (1 << USIOIE);
+}
+
+// SPIで1バイト受信(＝USIDRに値が埋まる)すると割り込み発生
+ISR(USI_OVERFLOW_vect){
+  // データレジスタから値を読み出し
+  uint8_t data = USIDR;
+  // 割り込みフラグをクリア
+  USISR |= (1<<USIOIF);
+}
+```
+
+[データシート](https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-2543-AVR-ATtiny2313_Datasheet.pdf)のSPI Slave Operation Exampleの項では、レジスタ読み出し後返答データを送っています。今回は必要ではなかったので、その箇所はスルーしています。
+
+### 注意点
+
+SPIのCSピンは関係なく動作します。きちんとCSピンを使った制御を行う場合は、割り込みが入ったタイミングでCSピンがHighかLowかで判定できると思います。ATtinyはピンの全数が少ないので、思いきってSPIバスを占有するとすればCSピンを他の用途に使うことができると考えられます。
+
+SPIを複数バイト一気に送ると、受信がうまくいきません。何か対処法があるのかもしれませんが、今のところはホスト側から1バイトずつ、わずかに間隔を空けて送信するとうまくいくところを確認しています。10ms間隔までは確認しました。
