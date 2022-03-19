@@ -1,0 +1,40 @@
+---
+layout: default
+title:  "nRF52840でIKEA TRÅDFRIを制御する"
+date:   2022-03-19 23:30:00 +0900
+categories: make
+---
+
+# nRF52840でIKEA TRÅDFRIを制御する
+
+nRF52840は、[NordicのSDK](https://www.nordicsemi.com/Products/Development-software/nRF5-SDK-for-Thread-and-Zigbee)を使うとZigbeeも扱うことができます。nRF52840を使った無線モジュールとSDK内のCLIデモアプリを組み合わせることで、[IKEA TRÅDFRI](https://www.ikea.com/jp/ja/p/tradfri-led-bulb-e26-1000-lumen-wireless-dimmable-white-spectrum-globe-opal-white-50408493/)を制御できるようになりました。
+
+## とりあえず制御できるようにするには
+
+### nRF52840の準備
+
+![](https://raw.githubusercontent.com/niccolli/log/main/images/20220139_nRF52840.jpg)
+
+nRF52840モジュールは、スイッチサイエンスで販売している[MS88SF2](https://www.switch-science.com/catalog/6564/)を使いました。写真のように、J-LINKが出す5Vを直結すると、モジュール内部で適宜降圧するのでとても便利です。
+
+1. nrf5sdkforthreadv41/components/boards/pca10056.h のUART入出力ピンを、モジュールで利用できるピンに変更する。どれを使うのかよくわからなかったので、UARTは全部同じピン番号に変更しました。
+1. J-LINKとMS88SF2を適切に接続する。UARTは前項で設定したピンに合わせます。
+1. nrf5sdkforthreadv41/examples/zigbee/experimental/cli/cli_agent_router/pca10056/blank/ses/zigbee_cli_agent_router_pca10056.emProject を、SEGGER Embedded Studioで開く。
+1. UARTのピン番号が変更になっているので、再度ビルドしてMS88SF2に書き込む。
+1. シリアルコンソールで > が表示されており、エンターキーでCLIが動くことを確認する。
+
+### TRÅDFRIを制御する
+
+今のところ下記の手順で制御できるようになりました。手間がかかるので、もっと簡単なやり方はあるのかもしれません。
+
+1. Nordicのドキュメント内、[Using CLI to control lighting devices](https://infocenter.nordicsemi.com/topic/sdk_tz_v4.0.0/zigbee_example_cli_agent.html?cp=8_7_0_3_8_5_1_4#zigbee_example_cli_agent_light_link)に従って、match_descまでコマンドを入力する。
+1. match_desc実行中に、[TRÅDFRIの電球側を初期化する](https://youtu.be/HtwwHzIx62w)。
+1. タイミングが合うとsrc_addrが出力される。この値を使ってieee_addrのコマンドを実行する。
+1. 16桁の文字列を使ってドキュメント内の「Interacting with clusters」のコマンドを実行すると、それぞれ対応した動作をさせることができます。
+
+## おわりに
+
+- 16桁のアドレスは固定っぽいのだけど、src_addrの4桁は登録のたびに異なっている。理由・意味はまだわかっていません。
+- 最初からいきなり16桁のアドレスを呼び出しても動きません。src_addrのあたりはペアリングのような動作なのかもしれない。
+- 1台登録したあとに追加しようともう1回match_descを実行しても、追加分が出てこなかった。何が問題なのかはわかっていません。電波が届かなかった等もあるかもしれないので、原因の切り分けは大変です。
+- オン・オフは個別にアドレス指定することがわかったので、Homebridge等と組み合わせれば部屋ごと・用途ごとのような細かい制御ができると期待しています。
