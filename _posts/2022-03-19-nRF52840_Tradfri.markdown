@@ -1,7 +1,7 @@
 ---
 layout: default
 title:  "nRF52840でIKEA TRÅDFRIを制御する"
-date:   2022-03-19 23:30:00 +0900
+date:   2022-03-19 21:40:00 +0900
 categories: make
 ---
 
