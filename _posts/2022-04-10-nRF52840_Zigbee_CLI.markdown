@@ -1,0 +1,63 @@
+---
+layout: default
+title:  "nRF52840でNordic Zigbee CLI Wrapperを使う"
+date:   2022-04-10 21:00:00 +0900
+categories: make
+---
+
+# nRF52840でNordic Zigbee CLI Wrapperを使う
+
+他メーカーのICだとZigbeeの各機能をCLIとして提供しており、それをさらにPythonやNode.js等の言語でラップすることでMQTTやHomeKitのブリッジを実現しています。NordicにもそのようなCLI環境が用意されているので、動かせる状態まで持っていく手順を記載します。
+
+## とりあえず制御できるようにするには
+
+### nRF52840の準備
+
+![](https://raw.githubusercontent.com/niccolli/log/main/images/20220410_nRF52840.jpg)
+
+1. [zb-cli-wrapper](https://pypi.org/project/zb-cli-wrapper/)から、Pythonライブラリのファイルをダウンロードします。同梱のビルド済みファームウェアをそのまま書き込みます。
+1. J-LINKを使い、SWD経由で接続します。
+1. nrfjprogを使ってhexファイル(gcc_zigbee_cli_agent_router_pca10056_nrf52840_xxaa.hex)を書き込みます。
+
+nRF52840モジュールは、スイッチサイエンスで販売している[MS88SF2](https://www.switch-science.com/catalog/6564/)を使いました。nRF52840はUSBのPHYを内蔵しています。そんなに高速ではないので、ブレッドボードで雑につないでもとりあえず動きます。
+
+書き込むファームウェアはNordic評価基板を前提としているので、UART等のピン配列もそれに沿った設定になっています。生のUARTは使えないことが多いですが、USBデバイスもあらかじめ有効になっているのでこちらを活用します。ホスト側ではシリアル通信として認識されるので、WindowsならばCOMn、macOS/Linuxならば/dev/tty*として利用できます。
+
+Pythonライブラリに同梱のhexファイルは、nrfjprogでのみ書き込みが成功しました。J-LINKのJ-FlashやnRF Connect for Desktopでは、hexファイルに問題があるというエラーが出て失敗します。
+
+### Python (MQTT_Zigbee_gateway.py) の準備と起動
+
+1. ダウンロードした[zb-cli-wrapper](https://pypi.org/project/zb-cli-wrapper/)のディレクトリに移動します。
+1. Readme.mdに従って依存のライブラリ群をインストールします。依存ライブラリの先で依存しているものがなく失敗する場合、それらをインストールしてから再度実行で問題ありません。
+1. Pythonのコードを修正します。
+  - example/MQTT_Zigbee_gateway.py: Loadが衝突する(らしい)問題への対応。
+    - from yaml import load → import yaml
+    - config = load(f.read()) → config = yaml.safe_load(f.read())
+  - example/MQTT_Zigbee_gateway.py: IKEA TRÅDFRIに合わせた変更。
+    - cli_dev.bdb.start() の次の行に cli_dev.bdb.legacy = True を追加。
+  - zb_cli_wrapper/nrf_dev_map/nrfmap.py: macOSで動かす場合の対応。Linuxと同じコードで動くので、OS判定の部分のみ変更でOKです。
+    - elif sys.platform.startswith('linux'): → elif sys.platform.startswith('darwin'):
+1. 設定ファイルを適宜修正します。
+  - example/config.yaml
+    - CLIDevice role: 'zc'に変更
+    - CLIDevice com_port: 環境に合わせて変更
+1. MQTT Brokerを起動します。ローカルで動いていればいいので、[Mosquitto](https://mosquitto.org/)を実行させておきます。
+1. example/MQTT_Zigbee_gateway.py を実行します。
+
+正しく設定できていると、下記のログが表示されます。通信ができているのかはまだ確認できていません。
+
+```
+% python MQTT_Zigbee_gateway.py
+MQTT_Zigbee_gateway.py: INFO: Connected to broker. Starting CLI...
+zb_cli_dev.py: INFO: Trying to open com port /dev/tty.usbmodemDDBD480AEB721. Attempts left: 10.
+zb_cli_dev.py: INFO: Com port /dev/tty.usbmodemDDBD480AEB721 opened successfully.
+MQTT_Zigbee_gateway.py: INFO: CLI device created, trying to connect ...
+zb_cli_dev.py: INFO: Trying to connect cli to network. Attempts left: 9
+zb_cli_dev.py: INFO: Trying to connect cli to network. Attempts left: 8
+zb_cli_dev.py: INFO: CLI short address: 0x0000
+MQTT_Zigbee_gateway.py: INFO: Client started.
+```
+
+## おわりに
+
+わかりにくいドキュメントしか参照できるものがなく、実行してみた記録もほとんどインターネットに載っていないので、動かすまで苦労しました。Python側ではCLIをよしなに扱うためにThreadを立てており、それらの挙動はまだ理解していません。レイヤーの高低を幅広く読むのは苦労しますね。
