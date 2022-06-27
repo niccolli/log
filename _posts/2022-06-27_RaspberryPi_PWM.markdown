@@ -2,7 +2,7 @@
 layout: default
 title:  "Raspberry Pi OS BullseyeでのPWMの設定方法"
 date:   2022-06-27 22:30:00 +0900
-categories: make raspberrypi
+categories: make
 ---
 
 # Raspberry Pi OS BullseyeでのPWMの設定方法
