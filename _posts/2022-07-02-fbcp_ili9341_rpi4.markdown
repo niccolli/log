@@ -1,0 +1,27 @@
+---
+layout: default
+title:  "Raspberry PiでSPIディスプレイをフル活用する"
+date:   2022-07-02 23:30:00 +0900
+categories: make raspberrypi
+---
+
+# Raspberry PiでSPIディスプレイをフル活用する
+
+
+
+## 画面
+
+```
+#dtoverlay=vc4-kms-v3d
+dtoverlay=vc4-fkms-v3d
+```
+
+解像度は640x480に設定
+
+```
+cmake -DILI9341=ON -DGPIO_TFT_DATA_CONTROL=25 -DGPIO_TFT_RESET_PIN=24 -DSPI_BUS_CLOCK_DIVISOR=8 -DARMV8A=ON -DUSE_DMA_TRANSFERS=ON ..
+```
+
+## 動作の様子
+
+<blockquote class="twitter-tweet" data-conversation="none"><p lang="ja" dir="ltr">使い方がわかってきた <a href="https://t.co/YTankWKmp9">pic.twitter.com/YTankWKmp9</a></p>&mdash; 𝕟𝕚𝕔𝕔𝕠𝕝𝕝𝕚 (@niccolli) <a href="https://twitter.com/niccolli/status/1542498042539978753?ref_src=twsrc%5Etfw">June 30, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
