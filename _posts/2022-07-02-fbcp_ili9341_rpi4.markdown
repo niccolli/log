@@ -19,6 +19,8 @@ Raspberry PiのSPIバスを使うディスプレイも、fbcpを使うと動画�
 
 [fbcp-ili9341](https://github.com/juj/fbcp-ili9341)を使います。[Building and running](https://github.com/juj/fbcp-ili9341#building-and-running)にある手順でビルドできます。必ずRaspberry Pi OS (Bullseye)の**32bit版**を使ってください。
 
+fbcpは、基本構造はフレームバッファに入ってきた描画データをSPIに置き換えて流し込み続けます。が、それではSPIのバス速度では全ピクセルの書き換えが間に合いません。READMEには各フレームで差分のみ更新していると記載されています。
+
 ビルドオプションは次のように設定しました。SPI_BUS_CLOCK_DIVISORはREADMEに記載の6だとうまく表示できなかったので8 (250MHz/8=31.25MHz) にしています。もともと[ILI9341のSPI最大周波数は10MHz](https://www.eevblog.com/forum/microcontrollers/ili9341-lcd-driver-max-spi-clock-speed/)らしく、かなりのオーバークロックで使うことになります。DMA_RX_CHANNEL=5は指定しなくても大丈夫なんですが、実行時に衝突しているメッセージが出たら適宜設定してください。
 
 ```
@@ -27,15 +29,9 @@ cmake -DILI9341=ON -DGPIO_TFT_DATA_CONTROL=22 -DGPIO_TFT_RESET_PIN=24 -DSPI_BUS_
 
 ### config.txtの設定
 
+HDMIケーブルの接続なくデスクトップ画面を表示するには、/boot/config.txtを次のように設定します。下記gistを参照してください。dtoverlayのSPIは設定してもいいですが、誤って他のプロセスやシェルから同じバスを呼び出してしまうと、fbcpが止まります。CSで他の部品を呼ぶ余裕もないほどバスを占有する前提として、設定しないほうがいいでしょう。
 
-
-```
-#dtoverlay=vc4-kms-v3d
-dtoverlay=vc4-fkms-v3d
-```
-
-解像度は640x480に設定
-
+<script src="https://gist.github.com/niccolli/fce91be5ed39e68443ea5d73ac8e94ef.js"></script>
 
 ## 動作の様子
 
