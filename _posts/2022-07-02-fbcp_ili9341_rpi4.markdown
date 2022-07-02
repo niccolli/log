@@ -35,4 +35,21 @@ HDMIケーブルの接続なくデスクトップ画面を表示するには、/
 
 ## 動作の様子
 
+滑らかに動くし、音声とのズレも感じなくて気に入っています。
+
 <blockquote class="twitter-tweet" data-conversation="none"><p lang="ja" dir="ltr">使い方がわかってきた <a href="https://t.co/YTankWKmp9">pic.twitter.com/YTankWKmp9</a></p>&mdash; 𝕟𝕚𝕔𝕔𝕠𝕝𝕝𝕚 (@niccolli) <a href="https://twitter.com/niccolli/status/1542498042539978753?ref_src=twsrc%5Etfw">June 30, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+## その他
+
+### Raspberry Pi起動時にfbcp-ili9341も起動させる
+
+/etc/rc.localのexit 0の前に、fbcp-ili9341の起動コマンドを追加します。
+
+```
+[パス]/fbcp-ili9341 &
+```
+
+### 64bit版OSでは動きません
+
+[Known Issues](https://github.com/juj/fbcp-ili9341#raspbian--32-bit-only)にもあるように、ビルドが通らず動きません。
