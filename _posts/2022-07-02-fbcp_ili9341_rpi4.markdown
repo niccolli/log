@@ -7,9 +7,27 @@ categories: make raspberrypi
 
 # Raspberry PiでSPIディスプレイをフル活用する
 
-
+Raspberry PiのSPIバスを使うディスプレイも、fbcpを使うと動画も流せることがわかりました。使い方をまとめます。
 
 ## 画面
+
+秋月電子で購入できる[MSP2807](https://akizukidenshi.com/catalog/g/gM-16265/)を使います。その他通販だとタッチコントローラーがないものもあるようですが、使わないので問題ありません。
+
+## ソフトウェア
+
+### fbcp-ili9341
+
+[fbcp-ili9341](https://github.com/juj/fbcp-ili9341)を使います。[Building and running](https://github.com/juj/fbcp-ili9341#building-and-running)にある手順でビルドできます。必ずRaspberry Pi OS (Bullseye)の**32bit版**を使ってください。
+
+ビルドオプションは次のように設定しました。SPI_BUS_CLOCK_DIVISORはREADMEに記載の6だとうまく表示できなかったので8 (250MHz/8=31.25MHz) にしています。もともと[ILI9341のSPI最大周波数は10MHz](https://www.eevblog.com/forum/microcontrollers/ili9341-lcd-driver-max-spi-clock-speed/)らしく、かなりのオーバークロックで使うことになります。DMA_RX_CHANNEL=5は指定しなくても大丈夫なんですが、実行時に衝突しているメッセージが出たら適宜設定してください。
+
+```
+cmake -DILI9341=ON -DGPIO_TFT_DATA_CONTROL=22 -DGPIO_TFT_RESET_PIN=24 -DSPI_BUS_CLOCK_DIVISOR=8 -DARMV8A=ON -DUSE_DMA_TRANSFERS=ON -DDMA_RX_CHANNEL=5 -DBACKLIGHT_CONTROL=ON -DGPIO_TFT_BACKLIGHT=23 ..
+```
+
+### config.txtの設定
+
+
 
 ```
 #dtoverlay=vc4-kms-v3d
@@ -18,9 +36,6 @@ dtoverlay=vc4-fkms-v3d
 
 解像度は640x480に設定
 
-```
-cmake -DILI9341=ON -DGPIO_TFT_DATA_CONTROL=25 -DGPIO_TFT_RESET_PIN=24 -DSPI_BUS_CLOCK_DIVISOR=8 -DARMV8A=ON -DUSE_DMA_TRANSFERS=ON ..
-```
 
 ## 動作の様子
 
