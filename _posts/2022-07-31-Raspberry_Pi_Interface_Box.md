@@ -9,6 +9,8 @@ categories: make raspberrypi
 
 ![](https://raw.githubusercontent.com/niccolli/log/main/images/20220724_2.jpg)
 
+という物を作りました。良い物を作ったと大変気に入っているので、アウトプットを残しておきます。
+
 ## なぜ作ったか
 
 ### Raspberry Piを持て余していた
@@ -55,10 +57,16 @@ Raspberry Pi 4を1台、常時動かしており、かつてはAirPlayサーバ�
 
 見た目がよくとても気に入っています。机上に置いておくのもいいですが、写真のようにシンセサイザーのスペースにぴったり嵌まってしまい、楽器と合わせた機器として活用するのもよいのではと考えています。
 
-### ケーブル抜き差しの不安解消
+### ケーブル抜き差し時の不安解消
 
 Raspberry Pi本体はピンヘッダでのみ固定されているので、電源等のケーブル抜き差しで不安定になります。ネジ穴で固定できるようにするため、底面板を板金加工で作り直しています。
 
 ### 頒布するかどうか
 
 「見た目が数を作って頒布してほしい」という話を聞いています。ありがたい限りですが、先のディスプレイ組み付けがあまり他人にお勧めできないため、ちょっと悩ましいところです。LEDは[秋月電子](https://akizukidenshi.com/catalog/goods/search.aspx?search=x&keyword=OSL40391&image=%8C%9F%8D%F5)に、スイッチは[千石電商](https://www.sengoku.co.jp/mod/sgk_cart/search.php?multi=B3J)にそれぞれカラーバリエーションがあるので、好きな色を選んでもらうのは良いかなと思っています。
+
+### ソフトウェアを作り込んでいく
+
+![](https://raw.githubusercontent.com/niccolli/log/main/images/20220724_7.jpg)
+
+下回りの開発・改善は一段落と思うので、ディスプレイを活用した見栄えのいいインタフェースを作っていこうと思います。AirPlayサーバーの[shairport-sync](https://github.com/mikebrady/shairport-sync)では今流している曲の情報を受け取れるので、まずはそれらを表示する仕組みを整えようと思います。使い方のわからない抵抗被膜タッチインタフェースも手をつけないとと思いますが、スイッチがついているのであまり使わないかなとも思っています。
