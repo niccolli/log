@@ -7,6 +7,8 @@ categories: make raspberrypi
 
 # Raspberry PiでSPIディスプレイをフル活用する
 
+![](https://raw.githubusercontent.com/niccolli/log/main/images/20220702.jpg)
+
 Raspberry PiのSPIバスを使うディスプレイも、fbcpを使うと動画も流せることがわかりました。使い方をまとめます。
 
 ## 画面
