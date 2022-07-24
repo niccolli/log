@@ -63,7 +63,7 @@ Raspberry Pi本体はピンヘッダでのみ固定されているので、電�
 
 ### 頒布するかどうか
 
-「見た目が数を作って頒布してほしい」という話を聞いています。ありがたい限りですが、先のディスプレイ組み付けがあまり他人にお勧めできないため、ちょっと悩ましいところです。LEDは[秋月電子](https://akizukidenshi.com/catalog/goods/search.aspx?search=x&keyword=OSL40391&image=%8C%9F%8D%F5)に、スイッチは[千石電商](https://www.sengoku.co.jp/mod/sgk_cart/search.php?multi=B3J)にそれぞれカラーバリエーションがあるので、好きな色を選んでもらうのは良いかなと思っています。
+「数を作って頒布してほしい」という話を聞いています。ありがたい限りですが、先のディスプレイ組み付けがあまり他人にお勧めできないため、ちょっと悩ましいところです。LEDは[秋月電子](https://akizukidenshi.com/catalog/goods/search.aspx?search=x&keyword=OSL40391&image=%8C%9F%8D%F5)に、スイッチは[千石電商](https://www.sengoku.co.jp/mod/sgk_cart/search.php?multi=B3J)にそれぞれカラーバリエーションがあるので、好きな色を選んでもらうのは良いかなと思っています。
 
 ### ソフトウェアを作り込んでいく
 
