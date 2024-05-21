@@ -9,7 +9,7 @@ categories: make raspberrypi
 
 [過去の記事](https://niccol.li/log/make/raspberrypi/2022/07/02/fbcp_ili9341_rpi4.html)で、Raspberry PiでSPIディスプレイを使うにはfbcp-ili9341を使って表示させる方法を記載しましたが、残念ながらfbcp-ili9341は64bitに対応できない・参照しているライブラリが古いとの理由で[開発終了](https://github.com/juj/fbcp-ili9341)となりました。
 
-一方で、Raspberry PiでSPIディスプレイを扱うのにあたって新しいドライバがLinuxカーネルに組み込まれるようになりました。mipi-dbi-spiです。この記事では、64bit版Raspberry Pi OSでの適用方法を記載します。
+一方で、Raspberry PiでSPIディスプレイを扱うのにあたって新しいドライバがLinuxカーネルに組み込まれるようになりました。[mipi-dbi-spi](https://github.com/raspberrypi/rpi-firmware/blob/30a6adaded0241842a58fecb70ca4ed99bac0e35/overlays/README#L3289)です。この記事では、64bit版Raspberry Pi OSでの適用方法を記載します。
 
 ## 設定方法
 
