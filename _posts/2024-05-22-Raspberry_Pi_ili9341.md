@@ -1,8 +1,8 @@
 ---
 layout: default
-title:  "HomespanでM5AtomをHomeKitデバイスにする"
-date:   2024-05-12 22:00:00 +0900
-categories: make esp32 homekit
+title:  "Raspberry PiでSPIディスプレイに画面を表示させる (64bit対応)"
+date:   2024-05-22 08:00:00 +0900
+categories: make raspberrypi
 ---
 
 # Raspberry PiでSPIディスプレイに画面を表示させる (64bit対応)
