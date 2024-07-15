@@ -60,3 +60,9 @@ ILI9341の場合、[データシート](https://cdn-shop.adafruit.com/datasheets
 <blockquote class="twitter-tweet" data-media-max-width="560"><p lang="ja" dir="ltr">SPIのディスプレイでかなりスムーズに表示できるぞ <a href="https://t.co/5UZmNeDWhw">pic.twitter.com/5UZmNeDWhw</a></p>&mdash; niccolli (@niccolli) <a href="https://twitter.com/niccolli/status/1775885281532784962?ref_src=twsrc%5Etfw">April 4, 2024</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 もたつくようなこともなくスムーズに表示されています。じっと見つめていると反映されていない箇所もあるように見えますが、動画の場合はすぐ書き換えられるのであまり気にならないと言えるでしょう。
+
+## 追記：Raspberry Pi 3以前の場合
+
+mipi-dbi-spiは、Wayland環境を前提としているようです。BookwormはWayland が標準になりましたが、Raspberry Pi 3以前(＋Zeroシリーズ)では引き続きX11が標準で使われています。
+
+Raspberry Pi 3以前の環境でWaylandを使う場合、[/boot/firmware/cmdline.txtに設定を追加する必要があります](https://www.raspberrypi.com/documentation/computers/configuration.html#wayland)。raspi-config上での設定は反映されないので注意が必要です。
